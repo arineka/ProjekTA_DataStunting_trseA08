@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <ctime>
+#include <iomanip> // untuk setw
 using namespace std;
 
 // Struktur data anak
@@ -10,10 +12,11 @@ struct Anak {
     float berat;
     float tinggi;
     string daerah;
-    vector<string> makanan; // daftar makanan seminggu
+    vector<string> makanan;
+    string keseharian;
 };
 
-// Fungsi cek gizi
+// Fungsi untuk cek gizi
 bool cekGizi(const vector<string>& makanan) {
     bool protein = false, vitamin = false, karbo = false, lemak = false;
     for (auto& m : makanan) {
@@ -25,7 +28,7 @@ bool cekGizi(const vector<string>& makanan) {
     return (protein && vitamin && karbo && lemak);
 }
 
-// Fungsi deteksi stunting
+// Fungsi deteksi stunting (sederhana: tinggi < standar)
 bool deteksiStunting(float tinggi, int umur) {
     if (umur <= 5 && tinggi < 100) return true;
     if (umur <= 10 && tinggi < 130) return true;
@@ -33,47 +36,95 @@ bool deteksiStunting(float tinggi, int umur) {
     return false;
 }
 
+// Fungsi rekomendasi makanan
+vector<string> rekomendasiMakanan() {
+    return {"telur", "ikan", "sayur hijau", "buah segar", "kacang", "susu"};
+}
+
+// Fungsi untuk tanggal pendampingan
+string tanggalPendampingan() {
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    int hari = ltm->tm_mday + 7; // pendampingan seminggu ke depan
+    int bulan = 1 + ltm->tm_mon;
+    int tahun = 1900 + ltm->tm_year;
+    return to_string(hari) + "-" + to_string(bulan) + "-" + to_string(tahun);
+}
+
 int main() {
-    Anak anak1;
-
-    // Input data sederhana
-    cout << "Nama: "; getline(cin, anak1.nama);
-    cout << "Umur: "; cin >> anak1.umur;
-    cout << "Berat badan (kg): "; cin >> anak1.berat;
-    cout << "Tinggi badan (cm): "; cin >> anak1.tinggi;
+    int n;
+    cout << "Masukkan jumlah anak yang ingin dipantau: ";
+    cin >> n;
     cin.ignore();
-    cout << "Daerah: "; getline(cin, anak1.daerah);
 
-    int jmlMakanan;
-    cout << "Jumlah jenis makanan dikonsumsi seminggu: ";
-    cin >> jmlMakanan;
-    cin.ignore();
-    for (int i = 0; i < jmlMakanan; i++) {
-        string makanan;
-        cout << "Makanan ke-" << i+1 << ": ";
-        getline(cin, makanan);
-        anak1.makanan.push_back(makanan);
+    vector<Anak> dataAnak(n);
+
+    // Input data
+    for (int i = 0; i < n; i++) {
+        cout << "\nData Anak ke-" << i+1 << endl;
+        cout << "Nama: "; getline(cin, dataAnak[i].nama);
+        cout << "Umur: "; cin >> dataAnak[i].umur;
+        cout << "Berat badan (kg): "; cin >> dataAnak[i].berat;
+        cout << "Tinggi badan (cm): "; cin >> dataAnak[i].tinggi;
+        cin.ignore();
+        cout << "Daerah: "; getline(cin, dataAnak[i].daerah);
+
+        int jmlMakanan;
+        cout << "Jumlah jenis makanan dikonsumsi seminggu: ";
+        cin >> jmlMakanan;
+        cin.ignore();
+        for (int j = 0; j < jmlMakanan; j++) {
+            string makanan;
+            cout << "Makanan ke-" << j+1 << ": ";
+            getline(cin, makanan);
+            dataAnak[i].makanan.push_back(makanan);
+        }
+
+        cout << "Keseharian anak: ";
+        getline(cin, dataAnak[i].keseharian);
     }
 
-    // Tampilkan data inputan
-    cout << "\n=== Data Anak ===" << endl;
-    cout << "Nama: " << anak1.nama << endl;
-    cout << "Umur: " << anak1.umur << " tahun" << endl;
-    cout << "Berat: " << anak1.berat << " kg" << endl;
-    cout << "Tinggi: " << anak1.tinggi << " cm" << endl;
-    cout << "Daerah: " << anak1.daerah << endl;
+    // Header tabel
+    cout << "\n====================================================================================================================\n";
+    cout << setw(15) << left << "Nama"
+         << setw(6)  << "Umur"
+         << setw(8)  << "Berat"
+         << setw(8)  << "Tinggi"
+         << setw(15) << "Daerah"
+         << setw(25) << "Status Gizi"
+         << setw(25) << "Status Stunting"
+         << setw(25) << "Pendampingan/Rekomendasi"
+         << endl;
+    cout << "====================================================================================================================\n";
 
-    cout << "Makanan seminggu: ";
-    for (auto& m : anak1.makanan) cout << m << ", ";
-    cout << endl;
+    // Analisis per anak
+    for (int i = 0; i < n; i++) {
+        bool gizi = cekGizi(dataAnak[i].makanan);
+        bool stunting = deteksiStunting(dataAnak[i].tinggi, dataAnak[i].umur);
 
-    // Analisis gizi
-    bool gizi = cekGizi(anak1.makanan);
-    cout << "Status Gizi: " << (gizi ? "TERPENUHI" : "BELUM TERPENUHI") << endl;
+        string statusGizi = gizi ? "TERPENUHI" : "BELUM TERPENUHI";
+        string statusStunting, pendampingan;
 
-    // Analisis stunting
-    bool stunting = deteksiStunting(anak1.tinggi, anak1.umur);
-    cout << "Status Stunting: " << (stunting ? "STUNTING" : "Sehat") << endl;
+        if (stunting) {
+            statusStunting = "STUNTING";
+            pendampingan = "Pendampingan: " + tanggalPendampingan();
+        } else {
+            statusStunting = "Sehat";
+            pendampingan = "Keseharian diteruskan";
+        }
+
+        cout << setw(15) << left << dataAnak[i].nama
+             << setw(6)  << dataAnak[i].umur
+             << setw(8)  << dataAnak[i].berat
+             << setw(8)  << dataAnak[i].tinggi
+             << setw(15) << dataAnak[i].daerah
+             << setw(25) << statusGizi
+             << setw(25) << statusStunting
+             << setw(25) << pendampingan
+             << endl;
+    }
+
+    cout << "====================================================================================================================\n";
 
     return 0;
 }
