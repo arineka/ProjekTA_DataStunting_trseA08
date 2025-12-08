@@ -289,20 +289,20 @@ int main() {
 
     cout << string(140, '=') << "\n\n";
 
-    // Ringkasan frekuensi kekurangan
-    cout << "RINGKASAN KEKURANGAN (Total / Pada Stunting)\n";
-    cout << left << setw(16) << "Kekurangan" << setw(12) << "Total" << setw(18) << "Dalam Stunting" << "\n";
-    cout << string(50, '-') << "\n";
-    string labels[4] = {"Protein", "Vitamin", "Karbohidrat", "Lemak"};
-    for (int k = 0; k < 4; k++) {
-        cout << left << setw(16) << labels[k]
-             << setw(12) << deficiencyTotal[k]
-             << setw(18) << deficiencyInStunted[k]
-             << "\n";
-    }
-    cout << string(50, '=') << "\n";
+    // // Ringkasan frekuensi kekurangan
+    // cout << "RINGKASAN KEKURANGAN (Total / Pada Stunting)\n";
+    // cout << left << setw(16) << "Kekurangan" << setw(12) << "Total" << setw(18) << "Dalam Stunting" << "\n";
+    // cout << string(50, '-') << "\n";
+    // string labels[4] = {"Protein", "Vitamin", "Karbohidrat", "Lemak"};
+    // for (int k = 0; k < 4; k++) {
+    //     cout << left << setw(16) << labels[k]
+    //          << setw(12) << deficiencyTotal[k]
+    //          << setw(18) << deficiencyInStunted[k]
+    //          << "\n";
+    // }
+    // cout << string(50, '=') << "\n";
 
-    cout << "Untuk analisis medis gunakan standar WHO (z-score) dan pemeriksaan profesional.\n";
+    // cout << "Untuk analisis medis gunakan standar WHO (z-score) dan pemeriksaan profesional.\n";
 
     return 0;
 }
